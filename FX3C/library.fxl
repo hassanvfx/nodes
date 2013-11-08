@@ -1,0 +1,37 @@
+{
+"alias" :  "FXIShaderAdd",
+"builder" : "FX3Shader",
+"fragment" : "precision%20highp%20int%3B%0Aprecision%20highp%20float%3B%0Avarying%20%20vec2%20textureCoordinate%3B%0A%20uniform%20sampler2D%20texture0%3B%0A%20uniform%20sampler2D%20texture1%3B%0A%20void%20main%28%29%20%7B%0A%0A%20%20vec4%20textureColor1%20%3D%20texture2D%28texture0%2C%20textureCoordinate%29%3B%0A%20%20vec4%20textureColor2%20%3D%20texture2D%28texture1%2C%20textureCoordinate%29%3B%0A%20%20vec4%20result%20%3DtextureColor1%20%2B%20textureColor2%3B%0A%20gl_FragColor%3Dvec4%28result.r%2Cresult.g%2Cresult.b%2C1.0%29%3B%0A%20%7D%0A",
+"vertex" : {}
+}
+,
+{
+"alias" :  "FXIShaderAlphaAtlas",
+"builder" : "FX3AlphaAtlas",
+"knobs" : [
+{
+"knobName":"knobIntensity",
+"knobValue":1,
+"knobType":"float"
+}
+
+]
+,
+"fragment" : {},
+"vertex" : "precision%20highp%20int%3B%0Aprecision%20highp%20float%3B%0Aattribute%20vec4%20vertexPosition%3B%0A%20attribute%20vec4%20vertexUV%3B%0A%20uniform%20%20float%20knobIntensity%3B%0A%20varying%20vec2%20textureCoordinate%3B%0A%20void%20main%28%29%20%7B%0A%0A%20gl_Position%20%3D%20vertexPosition%3B%0A%20textureCoordinate%20%3D%20vertexUV.xy%3B%0A%20textureCoordinate.x%20%3D%20vertexUV.x%2A0.5%3B%0A%20if%28knobIntensity%20%3E%3D%200.5%29%7B%0A%0A%20textureCoordinate.x%20%3D%200.5%20%2B%20vertexUV.x%2A0.5%3B%0A%20%7D%0A%20%7D%0A"
+}
+,
+{
+"alias" :  "VDFXIShaderSolarize",
+"builder" : "FX3Shader",
+"fragment" : "precision%20highp%20int%3B%0Aprecision%20highp%20float%3B%0Avarying%20%20vec2%20textureCoordinate%3B%0A%20uniform%20sampler2D%20texture0%3B%0A%20uniform%20%20float%20knobMix%3B%0A%20%20float%20invert%28%20%20float%20a%29%7B%0A%0A%20return%201.0-a%3B%0A%20%7D%0A%20%20vec4%20gamma4%20%28%20%20vec4%20a%2C%20%20float%20val%20%29%20%7B%0A%0A%20return%20pow%28%20a%20%2C%20vec4%281.0%2Fval%29%29%3B%0A%20%7D%0A%20%20vec4%20bright4%20%28%20%20vec4%20a%2C%20%20float%20val%20%29%20%7B%0A%0A%20return%20a%20%2A%20vec4%28%20val%20%29%3B%0A%20%7D%0A%20%20float%20solarize%28%20%20float%20r%20%29%7B%0A%0A%20return%20%281.0%20-%20r%20%29%20%2A%20%28r%2A2.0%29%20%2B%20%28%20r%20%2A%20%281.0-r%2A2.0%20%29%20%29%3B%0A%20%7D%0A%20%20vec4%20solarize4%20%28%20%20vec4%20a%29%20%7B%0A%0A%20return%20vec4%28%20solarize%28a.r%29%20%2C%20solarize%28a.g%29%20%2Csolarize%28a.b%29%20%2Ca.a%29%3B%0A%20%7D%0A%20void%20main%28%29%20%7B%0A%0A%20%20float%20range%20%3D%200.5%20%2B%20knobMix%2A1.5%3B%0A%20%20vec4%20color%20%3D%20texture2D%28texture0%2C%20textureCoordinate%29%3B%0A%20color%20%3D%20gamma4%28%20color%2C%20range%29%3B%0A%20color%3D%20solarize4%28color%29%3B%0A%20color%3D%20bright4%28color%2C2.0%29%3B%0A%20color%20%3D%20clamp%28color%2C0.0%2C1.0%29%3B%0A%20if%28range%20%3E%201.2%29%7B%0A%0A%20color.r%20%3D%20invert%28color.r%29%3B%0A%20color.g%20%3D%20invert%28color.g%29%3B%0A%20color.b%20%3D%20invert%28color.b%29%3B%0A%20%7D%0A%20gl_FragColor%20%3D%20color%3B%0A%20%7D%0A",
+"vertex" : {}
+}
+,
+{
+"alias" :  "VDFXIShaderVintage",
+"builder" : "FX3Shader",
+"fragment" : "precision%20highp%20int%3B%0Aprecision%20highp%20float%3B%0Avarying%20%20vec2%20textureCoordinate%3B%0A%20uniform%20sampler2D%20texture0%3B%0A%20uniform%20sampler2D%20texture1%3B%0A%20uniform%20%20float%20knobMix%3B%0A%20void%20main%28%29%20%7B%0A%0A%20%20float%20effectStrength%20%3D%20knobMix%3B%0A%20%20vec4%20AvgLumin%20%3D%20vec4%280.5%2C%200.5%2C%200.5%2C%201.0%29%3B%0A%20%20vec4%20LumCoeff%20%3D%20vec4%280.2125%2C%200.7154%2C%200.0721%2C%201.0%29%3B%0A%20%20vec4%20overlayColor%20%3D%20vec4%281.0%2C1.0%2C1.0%2C1.0%29%3B%0A%20%20vec4%20frameColor%20%3D%20texture2D%28texture0%2C%20textureCoordinate%29%3B%0A%20overlayColor%20%3D%20mix%28overlayColor%2Ctexture2D%28texture1%20%2CtextureCoordinate%29%2CeffectStrength%29%3B%0A%20frameColor%20%3D%20overlayColor%20%2A%20frameColor%3B%0A%20%20vec4%20brtColor%20%3D%20frameColor%20%2A%20%281.1%20%2B%20effectStrength%20%2A%200.4%29%3B%0A%20%20vec4%20intensity%20%3D%20vec4%28dot%28brtColor%2C%20LumCoeff%29%29%3B%0A%20%20vec4%20satColor%20%3D%20mix%28intensity%2C%20brtColor%2C%201.0%29%3B%0A%20%20vec4%20conColor%20%3D%20mix%28AvgLumin%2C%20satColor%2C%201.2%20%29%3B%0A%20gl_FragColor%20%3D%20conColor%3B%0A%20gl_FragColor.w%20%3D%201.0%3B%0A%20%7D%0A",
+"vertex" : {}
+}
+]}
